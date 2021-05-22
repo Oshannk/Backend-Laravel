@@ -3,55 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Http\Resources\User as UserResource;
-use App\Http\Resources\UserCollection;
 use Illuminate\Http\Request;
+use App\Repositories\UserRepository;
 
 class UserController extends Controller
 {
-    public function index()
+
+    private $userRepository;
+
+    public function __construct(UserRepository $userRepository)
     {
-        return new UserCollection(User::all());
+        $this->userRepository = $userRepository;
+    }
+
+    public function index()
+    {        
+        return  $this->userRepository->all();
+       
     }
 
     public function show($id)
     {
-        return new UserResource(User::findOrFail($id));
+        return $this->userRepository->findById($id);
+       
     }
 
     public function store(Request $request)
     {
 
-
-       $user = User::create($request->all());
-
-       return (new UserResource($user))->response()->setStatusCode(201);
+        return $this->userRepository->store();
+    
     }
 
-    public function update(Request $request,$id){
+    public function update($id){
 
-        User::find($id)->update([
-            'fname' => $request->get('fname'),
-            'lname' => $request->get('lname'),
-            'email' => $request->get('email')
-        ]);       
+        return $this->userRepository->update($id);
 
-        return response()->json([
-            'error' => false,
-            'code'  => 202,
-            'message' => 'User was Udated!'
-        ],202);
     }
 
     public function delete($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
 
-        return response()->json([
-            'error' => false,
-            'code'  => 204,
-            'message' => 'User was deleted!'
-        ],202);
+        return $this->userRepository->delete($id);
+
     }
 }
