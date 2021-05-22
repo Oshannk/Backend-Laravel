@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\User;
 
-class UserRepository
+class UserRepository implements UserRepositoryInterface
 {
 
     public function all()
@@ -12,11 +12,11 @@ class UserRepository
         return User::all();
     }
 
-    public function findById($id)   
+    public function findById($id)
     {
         return User::findOrFail($id);
     }
-    public function update($id)     
+    public function update($id)
     {
         $user = User::where('id',$id)->firstOrFail();
 
@@ -24,7 +24,7 @@ class UserRepository
             'fname' => request()->get('fname'),
             'lname' => request()->get('lname'),
             'email' => request()->get('email'),
-        ]);      
+        ]);
     }
 
     public function delete($id)
